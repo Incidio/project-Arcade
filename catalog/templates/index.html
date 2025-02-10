@@ -3,67 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tic Tac Toe</title>
+    <title>Game Selector</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-        }
-        .board {
-            display: grid;
-            grid-template-columns: repeat(3, 100px);
-            grid-template-rows: repeat(3, 100px);
-            gap: 5px;
-            justify-content: center;
-            margin: 20px auto;
-        }
+        body { font-family: Arial, sans-serif; text-align: center; }
+        .game-container { display: none; margin-top: 20px; }
+        .board { display: grid; grid-template-columns: repeat(3, 100px); gap: 5px; justify-content: center; margin-top: 20px; }
         .cell {
             width: 100px;
-            height: 100px;
+            height: 100px; 
+            font-size: 36px; 
+            text-align: center; 
             display: flex;
-            align-items: center;
             justify-content: center;
-            font-size: 24px;
-            border: 2px solid black;
-            cursor: pointer;
-        }
-        .cell:hover {
-            background-color: #f0f0f0;
-        }
-        .winner {
-            font-size: 24px;
-            color: green;
-            margin-top: 10px;
-        }
+            align-items: center;
+            background: lightgray; 
+            border: 1px solid black; 
+            cursor: pointer; }
     </style>
 </head>
 <body>
-    <h1>Tic Tac Toe</h1>
-    <button onclick="startGame()">Начать новую игру</button>
-    <div class="board" id="board"></div>
-    <p id="status"></p>
-    
+
+    <button onclick="showGame(1)">Game 1 (Tic Tac Toe)</button>
+    <button onclick="showGame(2)">Game 2 (Empty)</button>
+
+    <!-- Tic Tac Toe Game -->
+    <div id="ticTacToe" class="game-container">
+        <h2>Tic Tac Toe</h2>
+        <button onclick="startGame()">Start New Game</button>
+        <p id="status">Press "Start New Game" to begin.</p>
+        <div id="board" class="board"></div>
+    </div>
+
+    <!-- Empty Game 2 -->
+    <div id="game2" class="game-container">
+        <h2>Game 2 (Empty)</h2>
+        <p>This is a placeholder for another game.</p>
+    </div>
+
     <script>
         let gameId = null;
-        let currentPlayer = "X";
-        const boardElement = document.getElementById("board");
-        const statusElement = document.getElementById("status");
+
+        function showGame(gameNumber) {
+            document.getElementById("ticTacToe").style.display = (gameNumber === 1) ? "block" : "none";
+            document.getElementById("game2").style.display = (gameNumber === 2) ? "block" : "none";
+        }
 
         function startGame() {
             fetch("/catalog/create/", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ player_x: "Игрок 1", player_o: "Игрок 2" }),
+                body: JSON.stringify({ player_x: "Player 1", player_o: "Player 2" })
             })
             .then(response => response.json())
             .then(data => {
+                console.log("Response:", data);
                 gameId = data.game_id;
                 renderBoard(["", "", "", "", "", "", "", "", ""]);
-                statusElement.innerText = "Игра началась! Ход X-ка.";
-            });
+                document.getElementById("status").innerText = "Game started! Player X's turn.";
+            })
+            .catch(error => console.error("Error:", error));
         }
 
         function renderBoard(board) {
+            const boardElement = document.getElementById("board");
             boardElement.innerHTML = "";
             board.forEach((cell, index) => {
                 const cellElement = document.createElement("div");
@@ -75,27 +77,26 @@
         }
 
         function makeMove(index) {
-            if (!gameId) return alert("Сначала начните новую игру!");
+            if (!gameId) return alert("Start a game first!");
+
             fetch(`/catalog/move/${gameId}/`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ index: index, player: currentPlayer }),
+                body: JSON.stringify({ index: index }) // No hardcoded player!
             })
             .then(response => response.json())
             .then(data => {
+                console.log("Move Response:", data);
                 if (data.message === "Move made!") {
                     renderBoard(data.board);
-                    if (data.winner) {
-                        statusElement.innerText = data.winner === "draw" ? "Это ничья!" : `Победитель: ${data.winner}`;
-                    } else {
-                        currentPlayer = currentPlayer === "X" ? "O" : "X";
-                        statusElement.innerText = `Ход игрока ${currentPlayer}`;
-                    }
+                    document.getElementById("status").innerText = data.winner ? `Winner: ${data.winner}` : `Next player's turn: ${data.current_turn}`;
                 } else {
-                    alert("Попробуй снова.");
+                    alert("Invalid move!");
                 }
-            });
+            })
+            .catch(error => console.error("Error:", error));
         }
     </script>
+
 </body>
 </html>

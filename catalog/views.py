@@ -18,17 +18,38 @@ def create_game(request):
 
 @csrf_exempt
 def make_move(request, game_id):
-    """Handles a move request"""
+    """Handles a player's move"""
     if request.method == "POST":
         data = json.loads(request.body)
-        game = Game.objects.get(id=game_id)
         index = data.get("index")
-        player = data.get("player")
 
-        if game.make_move(index, player):
-            return JsonResponse({"message": "Move made!", "board": game.board, "winner": game.winner})
-        return JsonResponse({"message": "Invalid move"}, status=400)
-    
+        try:
+            game = Game.objects.get(id=game_id)
+        except Game.DoesNotExist:
+            return JsonResponse({"message": "Game not found"}, status=404)
+
+        if not game.is_active:
+            return JsonResponse({"message": "Game is over"}, status=400)
+
+        if game.board[index] != "":  # Prevent overwriting moves
+            return JsonResponse({"message": "Invalid move, cell occupied"}, status=400)
+
+        # Apply the move
+        game.board[index] = game.current_turn
+        game.current_turn = "O" if game.current_turn == "X" else "X"
+        
+        winner = game.check_winner()
+        game.save()
+
+        return JsonResponse({
+            "message": "Move made!",
+            "board": game.board,
+            "current_turn": game.current_turn,
+            "winner": winner
+        })
+
+    return JsonResponse({"message": "Invalid request"}, status=400)
+
 def game_page(request):
     return render(request, "index.html")
 # Create your views here.
