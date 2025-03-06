@@ -52,4 +52,6 @@ def make_move(request, game_id):
 
 def game_page(request):
     return render(request, "index.html")
-# Create your views here.
+
+def memory(request):
+    return render(request, 'catalog/memory.html')
