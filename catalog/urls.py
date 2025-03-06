@@ -1,5 +1,5 @@
 from django.urls import path
-#from . import views
+from . import views
 from .views import game_page, create_game, make_move
 
 urlpatterns = [
