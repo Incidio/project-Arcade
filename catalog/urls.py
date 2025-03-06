@@ -6,4 +6,5 @@ urlpatterns = [
     path("", game_page, name="game_page"),
     path("create/", create_game, name="create_game"),
     path("move/<int:game_id>/", make_move, name="make_move"),
+    path('memory/', views.memory, name='memory'),
 ]
