@@ -20,7 +20,11 @@
         h1 {
             color: #671AA6;
             margin-bottom: 20px;
+            font-family: 'Trebuchet MS', serif;
+            font-size: 48px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
         }
+
 
         .memory-game {
             display: grid;
@@ -147,7 +151,7 @@
                     card.classList.add('flipped');
                     flippedCards.push(card); // Добавляем карту в массив перевернутых
 
-                    // Если перевернуто две карты
+                    //Если перевернуто две карты
                     if (flippedCards.length === 2) {
                         const [card1, card2] = flippedCards;
 
