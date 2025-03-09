@@ -72,39 +72,59 @@
     </div>
 
     <script>
-        const cards = document.querySelectorAll('.card');
+        //Функция для перемешивания массива (алгоритм Фишера-Йетса)
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        //Получаем контейнер с карточками
+        const memoryGame = document.querySelector('.memory-game');
+        //Получаем все карточки
+        const cards = Array.from(memoryGame.querySelectorAll('.card'));
+
+        //Перемешиваем карточки
+        shuffle(cards);
+
+        //Очищаем контейнер и добавляем перемешанные карточки
+        memoryGame.innerHTML = '';
+        cards.forEach(card => memoryGame.appendChild(card));
+
         let flippedCards = [];
         let matchedCards = [];
 
         cards.forEach(card => {
             card.addEventListener('click', () => {
-                // Проверяем, можно ли перевернуть карту
+                //Проверяем, можно ли перевернуть карту
                 if (flippedCards.length < 2 && !flippedCards.includes(card) && !matchedCards.includes(card)) {
-                    // Устанавливаем цвет фона карты
+                    //Устанавливаем цвет фона карты
                     card.style.backgroundColor = card.getAttribute('data-value');
-                    card.textContent = ''; // Убираем текст
+                    card.textContent = ''; //Убираем текст
                     card.classList.add('flipped');
-                    flippedCards.push(card); // Добавляем карту в массив перевернутых
+                    flippedCards.push(card); //Добавляем карту в массив перевернутых
 
-                    // Если перевернуто две карты
+                    //Если перевернуто две карты
                     if (flippedCards.length === 2) {
                         const [card1, card2] = flippedCards;
 
-                        // Проверяем, совпадают ли карты
+                        //Проверяем, совпадают ли карты
                         if (card1.getAttribute('data-value') === card2.getAttribute('data-value')) {
-                            // Если совпадают, добавляем их в массив сопоставленных
+                            //Если совпадают, добавляем их в массив сопоставленных
                             matchedCards.push(card1, card2);
-                            flippedCards = []; // Очищаем массив перевернутых
+                            flippedCards = []; //Очищаем массив перевернутых
                         } else {
-                            // Если не совпадают, через 1 секунду скрываем карты
+                            //Если не совпадают, через 1 секунду скрываем карты
                             setTimeout(() => {
-                                card1.style.backgroundColor = '#FF97E0'; // Возвращаем исходный цвет
+                                card1.style.backgroundColor = '#FF97E0'; //Возвращаем исходный цвет
                                 card2.style.backgroundColor = '#FF97E0';
                                 card1.textContent = '?';
                                 card2.textContent = '?';
                                 card1.classList.remove('flipped');
                                 card2.classList.remove('flipped');
-                                flippedCards = []; // Очищаем массив перевернутых
+                                flippedCards = []; //Очищаем массив перевернутых
                             }, 1000);
                         }
                     }
