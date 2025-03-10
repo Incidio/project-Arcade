@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="game-list">
+    {% for game in games %}
+    <div class="game-card">
+        <img src="{{ game.image.url }}" alt="{{ game.title }}">
+        <h2>{{ game.title }}</h2>
+        <p>{{ game.description }}</p>
+        <a href="{% url 'play_game' game.identifier %}">Играть</a>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

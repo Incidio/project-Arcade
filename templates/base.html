@@ -1,0 +1,69 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Аркада</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/milligram/1.4.1/milligram.min.css">
+    <style>
+        body {
+            background: url("{% static 'images/space.gif' %}") no-repeat center center fixed;
+            background-size: cover;
+            color: white; /* Adjust text color for readability */
+        }
+        .navbar {
+            background: rgba(0, 0, 0, 0.7); /* Semi-transparent navbar */
+            padding: 10px;
+            text-align: center;
+        }
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            font-size: 20px;
+            margin: 10px;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+        }
+        .game-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+        }
+        .game-card {
+            border: 1px solid #ddd;
+            padding: 15px;
+            width: 250px;
+            text-align: center;
+        }
+        .game-card img {
+            max-width: 100%;
+            height: auto;
+        }
+        .play-button {
+            display: block;
+            margin-top: 10px;
+            padding: 8px;
+            background: #28a745;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="navbar">
+        <a href="{% url 'home' %}">⭐ Аркада ⭐</a>
+    </div>
+
+    <div class="container">
+        {% block content %}
+        {% endblock %}
+    </div>
+
+</body>
+</html>

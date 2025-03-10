@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<h1>{{ game.title }}</h1>
+<p>{{ game.description }}</p>
+
+<div id="game-container"></div>  
+
+<iframe name=game id="game-iframe" src="{% static game.script_file %}" width="600" height="600" frameborder="0">
+
+</iframe>
+{% endblock %}
