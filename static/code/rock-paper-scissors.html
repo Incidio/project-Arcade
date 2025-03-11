@@ -32,9 +32,9 @@
 <body>
     <img id="game-image" src="/static/images/rock-paper-scissors/game.jpg" alt="Game Countdown">
     <div class="choices">
-        <button onclick="playGame('rock')">Камень</button>
-        <button onclick="playGame('paper')">Бумага</button>
-        <button onclick="playGame('scissors')">Ножницы</button>
+        <button onclick="playGame('камень')">Камень</button>
+        <button onclick="playGame('бумага')">Бумага</button>
+        <button onclick="playGame('ножницы')">Ножницы</button>
     </div>
     <p id="result"></p>
     
@@ -66,27 +66,29 @@
         
         function playGame(userChoice) {
             countdown(() => {
-                const choices = ['rock', 'paper', 'scissors'];
+                const choices = ['камень', 'бумага', 'ножницы'];
                 const computerChoice = choices[Math.floor(Math.random() * 3)];
                 let result = '';
                 let resultImage = '';
                 
                 if (userChoice === computerChoice) {
-                    result = "It's a tie!";
+                    result = "Это ничья!";
                     resultImage = images.tie;
                 } else if (
-                    (userChoice === 'rock' && computerChoice === 'scissors') ||
-                    (userChoice === 'paper' && computerChoice === 'rock') ||
-                    (userChoice === 'scissors' && computerChoice === 'paper')
+                    (userChoice === 'камень' && computerChoice === 'ножницы') ||
+                    (userChoice === 'бумага' && computerChoice === 'камень') ||
+                    (userChoice === 'ножницы' && computerChoice === 'бумага')
                 ) {
-                    result = 'You win!';
+                    result = 'Победа!';
                     resultImage = images.win;
                 } else {
-                    result = 'You lose!';
+                    result = 'Поражение!';
                     resultImage = images.lose;
                 }
                 
-                document.getElementById('result').innerText = `You chose ${userChoice}, computer chose ${computerChoice}. ${result}`;
+                document.getElementById('result').innerText = `Ваш выбор ${userChoice},
+                 Бот выбрал ${computerChoice}.
+                  ${result}`;
                 document.getElementById('game-image').src = resultImage;
             });
         }
