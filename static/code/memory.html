@@ -58,6 +58,25 @@
         .card.flipped img {
             display: block; /* Показываем картинку при перевороте */
         }
+
+        #restart-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #FF97E0;
+            color: white;
+            font-family: 'Trebuchet MS', serif;
+            font-size: 18px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            transition: background-color 0.3s ease;
+        }
+
+        #restart-button:hover {
+            background-color: #4a126f;
+        }
     </style>
 </head>
 <body>
@@ -117,6 +136,9 @@
         </div>
     </div>
 
+    <!-- Кнопка "Рестарт" -->
+    <button id="restart-button">Рестарт</button>
+
     <script>
         // Функция для перемешивания массива (алгоритм Фишера-Йетса)
         function shuffle(array) {
@@ -172,6 +194,29 @@
                 }
             });
         });
+
+        // Функция для перезапуска игры
+        function restartGame() {
+            // Сбрасываем все перевернутые и сопоставленные карты
+            flippedCards = [];
+            matchedCards = [];
+
+            // Скрываем все картинки
+            cards.forEach(card => card.classList.remove('flipped'));
+
+            // Перемешиваем карточки
+            shuffle(cards);
+
+            // Очищаем контейнер и добавляем перемешанные карточки
+            memoryGame.innerHTML = '';
+            cards.forEach(card => memoryGame.appendChild(card));
+        }
+
+        // Находим кнопку "Рестарт"
+        const restartButton = document.getElementById('restart-button');
+
+        // Добавляем обработчик события для кнопки
+        restartButton.addEventListener('click', restartGame);
     </script>
 </body>
 </html>
