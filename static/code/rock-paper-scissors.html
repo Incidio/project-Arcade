@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Камень ножницы бумага</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #222;
+            color: white;
+        }
+        .choices button {
+            font-size: 20px;
+            padding: 10px;
+            margin: 10px;
+            cursor: pointer;
+        }
+        #result {
+            font-size: 24px;
+            margin-top: 20px;
+        }
+        #game-image {
+            width: 200px;
+            height: 200px;
+            margin: 20px auto;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <img id="game-image" src="/static/images/rock-paper-scissors/game.jpg" alt="Game Countdown">
+    <div class="choices">
+        <button onclick="playGame('rock')">Камень</button>
+        <button onclick="playGame('paper')">Бумага</button>
+        <button onclick="playGame('scissors')">Ножницы</button>
+    </div>
+    <p id="result"></p>
+    
+    <script>
+        const images = {
+            countdown: [
+                "/static/images/rock-paper-scissors/rock.png",
+                "/static/images/rock-paper-scissors/paper.png", 
+                "/static/images/rock-paper-scissors/scissors.png", 
+                "/static/images/rock-paper-scissors/go!.png"],
+            win: "/static/images/rock-paper-scissors/win.jpg",
+            lose: "/static/images/rock-paper-scissors/lose.png",
+            tie: "/static/images/rock-paper-scissors/tie.jpg"
+        };
+        
+        function countdown(callback) {
+            let index = 0;
+            function changeImage() {
+                if (index < images.countdown.length) {
+                    document.getElementById('game-image').src = images.countdown[index];
+                    index++;
+                    setTimeout(changeImage, 500);
+                } else {
+                    callback();
+                }
+            }
+            changeImage();
+        }
+        
+        function playGame(userChoice) {
+            countdown(() => {
+                const choices = ['rock', 'paper', 'scissors'];
+                const computerChoice = choices[Math.floor(Math.random() * 3)];
+                let result = '';
+                let resultImage = '';
+                
+                if (userChoice === computerChoice) {
+                    result = "It's a tie!";
+                    resultImage = images.tie;
+                } else if (
+                    (userChoice === 'rock' && computerChoice === 'scissors') ||
+                    (userChoice === 'paper' && computerChoice === 'rock') ||
+                    (userChoice === 'scissors' && computerChoice === 'paper')
+                ) {
+                    result = 'You win!';
+                    resultImage = images.win;
+                } else {
+                    result = 'You lose!';
+                    resultImage = images.lose;
+                }
+                
+                document.getElementById('result').innerText = `You chose ${userChoice}, computer chose ${computerChoice}. ${result}`;
+                document.getElementById('game-image').src = resultImage;
+            });
+        }
+    </script>
+</body>
+</html>
