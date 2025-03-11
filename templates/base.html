@@ -7,52 +7,68 @@
     <title>Аркада</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/milligram/1.4.1/milligram.min.css">
     <style>
-        body {
-            background: url("{% static 'images/space.gif' %}") no-repeat center center fixed;
-            background-size: cover;
-            color: white; /* Adjust text color for readability */
-        }
-        .navbar {
-            background: rgba(0, 0, 0, 0.7); /* Semi-transparent navbar */
-            padding: 10px;
-            text-align: center;
-        }
-        .navbar a {
-            color: white;
-            text-decoration: none;
-            font-size: 20px;
-            margin: 10px;
-        }
-        .container {
-            width: 80%;
-            margin: auto;
-        }
-        .game-list {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 20px;
-        }
-        .game-card {
-            border: 1px solid #ddd;
-            padding: 15px;
-            width: 250px;
-            text-align: center;
-        }
-        .game-card img {
-            max-width: 100%;
-            height: auto;
-        }
-        .play-button {
-            display: block;
-            margin-top: 10px;
-            padding: 8px;
-            background: #28a745;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-        }
-    </style>
+    body {
+        background: url("{% static 'images/space.gif' %}") no-repeat center center fixed;
+        background-size: cover;
+        color: white;
+        font-family: 'Trebuchet MS', serif; /* Изменение шрифта для всего документа */
+    }
+    .navbar {
+        background: rgba(0, 0, 0, 0.7);
+        padding: 10px;
+        text-align: center;
+    }
+    .navbar a {
+        color: white;
+        text-decoration: none;
+        font-size: 20px;
+        margin: 10px;
+    }
+    .container {
+        width: 80%;
+        margin: auto;
+    }
+    .game-list {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 20px;
+    }
+    .game-card {
+        border: 1px solid #30028ba6;
+        padding: 15px;
+        width: 250px;
+        text-align: center;
+        background-color: #6551ffef; /* Цвет фона с прозрачностью */
+        border-radius: 10px; /* Закругленные углы */
+        box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5); /* Тень */
+    }
+    .game-card img {
+        max-width: 100%;
+        height: auto;
+    }
+    .play-button {
+        display: block;
+        margin-top: 10px;
+        padding: 8px;
+        background: #28a745;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+    }
+    h1 {
+        color: #c3ddfe;
+        margin-bottom: 20px;
+        font-family: 'Trebuchet MS', serif;
+        font-size: 48px;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    }
+    /* Дополнительные стили для текста внутри карточек игр */
+    .game-card h2, .game-card p {
+        color: #c3ddfe;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    }
+</style>
 </head>
 <body>
 
