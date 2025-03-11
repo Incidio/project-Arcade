@@ -30,54 +30,54 @@
     </style>
 </head>
 <body>
-    <img id="game-image" src="/static/images/rock-paper-scissors/game.jpg" alt="Game Countdown">
+    <h1>Камень ножницы бумага</h1>
+    <img id="game-image" src="/static/images/rock-paper-scissors/game.jpg" alt="Primary Image">
+    <p id="choose-text">Выберите вашу руку</p>
     <div class="choices">
-        <button onclick="playGame('камень')">Камень</button>
-        <button onclick="playGame('бумага')">Бумага</button>
-        <button onclick="playGame('ножницы')">Ножницы</button>
+        <button onclick="playGame('Камень')">Камень</button>
+        <button onclick="playGame('Бумага')">Бумага</button>
+        <button onclick="playGame('Ножницы')">Ножницы</button>
     </div>
-    <p id="result"></p>
     
     <script>
         const images = {
-            countdown: [
-                "/static/images/rock-paper-scissors/rock.png",
-                "/static/images/rock-paper-scissors/paper.png", 
-                "/static/images/rock-paper-scissors/scissors.png", 
-                "/static/images/rock-paper-scissors/go!.png"],
+            Камень: "/static/images/rock-paper-scissors/rock.png",
+            Бумага: "/static/images/rock-paper-scissors/paper.png",
+            Ножницы: "/static/images/rock-paper-scissors/scissors.png",
             win: "/static/images/rock-paper-scissors/win.jpg",
             lose: "/static/images/rock-paper-scissors/lose.png",
             tie: "/static/images/rock-paper-scissors/tie.jpg"
         };
-        
-        function countdown(callback) {
+
+        function shuffleImages(callback) {
+            const choices = ['Камень', 'Бумага', 'Ножницы'];
             let index = 0;
-            function changeImage() {
-                if (index < images.countdown.length) {
-                    document.getElementById('game-image').src = images.countdown[index];
-                    index++;
-                    setTimeout(changeImage, 500);
-                } else {
-                    callback();
-                }
-            }
-            changeImage();
+
+            const interval = setInterval(() => {
+                document.getElementById('game-image').src = images[choices[index]];
+                index = (index + 1) % choices.length;
+            }, 200);
+
+            setTimeout(() => {
+                clearInterval(interval);
+                callback();
+            }, 1000); // Shuffle for 1 second
         }
-        
+
         function playGame(userChoice) {
-            countdown(() => {
-                const choices = ['камень', 'бумага', 'ножницы'];
+            shuffleImages(() => {
+                const choices = ['Камень', 'Бумага', 'Ножницы'];
                 const computerChoice = choices[Math.floor(Math.random() * 3)];
                 let result = '';
                 let resultImage = '';
                 
                 if (userChoice === computerChoice) {
-                    result = "Это ничья!";
+                    result = "Ничья!";
                     resultImage = images.tie;
                 } else if (
-                    (userChoice === 'камень' && computerChoice === 'ножницы') ||
-                    (userChoice === 'бумага' && computerChoice === 'камень') ||
-                    (userChoice === 'ножницы' && computerChoice === 'бумага')
+                    (userChoice === 'Камень' && computerChoice === 'Ножницы') ||
+                    (userChoice === 'Бумага' && computerChoice === 'Камень') ||
+                    (userChoice === 'Ножницы' && computerChoice === 'Бумага')
                 ) {
                     result = 'Победа!';
                     resultImage = images.win;
@@ -86,10 +86,8 @@
                     resultImage = images.lose;
                 }
                 
-                document.getElementById('result').innerText = `Ваш выбор ${userChoice},
-                 Бот выбрал ${computerChoice}.
-                  ${result}`;
-                document.getElementById('game-image').src = resultImage;
+                document.getElementById('game-image').src = images[computerChoice];
+                document.getElementById('choose-text').innerText = result;
             });
         }
     </script>
