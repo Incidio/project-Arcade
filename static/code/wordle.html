@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Русский Вордл</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 500px;
+            width: 100%;
+            background: rgba(25, 25, 60, 0.85);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            text-align: center;
+        }
+        
+        .header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .title {
+            font-size: 3.5rem;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            color: #ffd700;
+            letter-spacing: 2px;
+            font-weight: bold;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 15px;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            width: 100%;
+            margin-top: 10px;
+        }
+        
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #ffd700;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        .game-board {
+            display: grid;
+            grid-template-rows: repeat(6, 1fr);
+            gap: 8px;
+            margin: 20px auto;
+            width: 350px;
+        }
+        
+        .row {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+        }
+        
+        .tile {
+            width: 100%;
+            aspect-ratio: 1/1;
+            border: 2px solid #3a3a3c;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2.5rem;
+            font-weight: bold;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+        }
+        
+        .tile.filled {
+            border-color: #565758;
+            animation: pop 0.1s ease;
+        }
+        
+        @keyframes pop {
+            0% { transform: scale(0.9); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .tile.correct {
+            background-color: #538d4e;
+            border-color: #538d4e;
+            animation: flip 0.5s ease forwards;
+        }
+        
+        .tile.present {
+            background-color: #b59f3b;
+            border-color: #b59f3b;
+            animation: flip 0.5s ease forwards;
+        }
+        
+        .tile.absent {
+            background-color: #3a3a3c;
+            border-color: #3a3a3c;
+            animation: flip 0.5s ease forwards;
+        }
+        
+        @keyframes flip {
+            0% { transform: rotateX(0); }
+            50% { transform: rotateX(90deg); }
+            100% { transform: rotateX(0); }
+        }
+        
+        .keyboard {
+            margin: 20px auto;
+            width: 100%;
+        }
+        
+        .keyboard-row {
+            display: flex;
+            justify-content: center;
+            margin: 5px 0;
+        }
+        
+        .key {
+            height: 50px;
+            min-width: 30px;
+            margin: 0 2px;
+            border-radius: 5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #818384;
+            color: white;
+            font-weight: bold;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            user-select: none;
+        }
+        
+        .key:hover {
+            background-color: #6a6a6c;
+        }
+        
+        .key.wide {
+            min-width: 65px;
+            font-size: 0.9rem;
+        }
+        
+        .key.correct {
+            background-color: #538d4e;
+        }
+        
+        .key.present {
+            background-color: #b59f3b;
+        }
+        
+        .key.absent {
+            background-color: #3a3a3c;
+        }
+        
+        .message {
+            height: 40px;
+            margin: 15px 0;
+            font-size: 1.2rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .controls {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        button {
+            background: linear-gradient(to right, #ff8c00, #ffd700);
+            color: #1a1a2e;
+            border: none;
+            padding: 12px 25px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+        
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+        }
+        
+        .win-message {
+            font-size: 2rem;
+            color: #ffd700;
+            margin: 20px 0;
+            font-weight: bold;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .dictionary-info {
+            margin-top: 20px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        @media (max-width: 500px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .title {
+                font-size: 2.5rem;
+            }
+            
+            .game-board {
+                width: 100%;
+            }
+            
+            .tile {
+                font-size: 2rem;
+            }
+            
+            .key {
+                height: 40px;
+                min-width: 25px;
+                font-size: 1rem;
+            }
+            
+            .key.wide {
+                min-width: 50px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="title">WORDLE</div>
+            <div class="subtitle">Угадай слово из 5 букв</div>
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-value" id="games-played">0</div>
+                    <div class="stat-label">Сыграно</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="win-streak">0</div>
+                    <div class="stat-label">Побед подряд</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="win-percent">0%</div>
+                    <div class="stat-label">Побед</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="message" id="message">Загрузка словаря...</div>
+        
+        <div class="game-board" id="board"></div>
+        
+        <div class="keyboard">
+            <div class="keyboard-row">
+                <div class="key" data-key="Й">Й</div>
+                <div class="key" data-key="Ц">Ц</div>
+                <div class="key" data-key="У">У</div>
+                <div class="key" data-key="К">К</div>
+                <div class="key" data-key="Е">Е</div>
+                <div class="key" data-key="Н">Н</div>
+                <div class="key" data-key="Г">Г</div>
+                <div class="key" data-key="Ш">Ш</div>
+                <div class="key" data-key="Щ">Щ</div>
+                <div class="key" data-key="З">З</div>
+                <div class="key" data-key="Х">Х</div>
+                <div class="key" data-key="Ъ">Ъ</div>
+            </div>
+            <div class="keyboard-row">
+                <div class="key" data-key="Ф">Ф</div>
+                <div class="key" data-key="Ы">Ы</div>
+                <div class="key" data-key="В">В</div>
+                <div class="key" data-key="А">А</div>
+                <div class="key" data-key="П">П</div>
+                <div class="key" data-key="Р">Р</div>
+                <div class="key" data-key="О">О</div>
+                <div class="key" data-key="Л">Л</div>
+                <div class="key" data-key="Д">Д</div>
+                <div class="key" data-key="Ж">Ж</div>
+                <div class="key" data-key="Э">Э</div>
+            </div>
+            <div class="keyboard-row">
+                <div class="key wide" data-key="Enter">Ввод</div>
+                <div class="key" data-key="Я">Я</div>
+                <div class="key" data-key="Ч">Ч</div>
+                <div class="key" data-key="С">С</div>
+                <div class="key" data-key="М">М</div>
+                <div class="key" data-key="И">И</div>
+                <div class="key" data-key="Т">Т</div>
+                <div class="key" data-key="Ь">Ь</div>
+                <div class="key" data-key="Б">Б</div>
+                <div class="key" data-key="Ю">Ю</div>
+                <div class="key wide" data-key="Backspace">⌫</div>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <button id="new-game">Новая игра</button>
+            <button id="hint">Подсказка</button>
+        </div>
+        
+        <div class="dictionary-info" id="dictionary-info">
+            Словарь загружается...
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Game state
+            const WORD_LENGTH = 5;
+            const MAX_GUESSES = 6;
+            let currentRow = 0;
+            let currentTile = 0;
+            let gameOver = false;
+            let winCount = 0;
+            let gamesPlayed = 0;
+            let winStreak = 0;
+            let validWords = [];
+            let targetWord = '';
+            
+            // DOM elements
+            const board = document.getElementById('board');
+            const message = document.getElementById('message');
+            const newGameBtn = document.getElementById('new-game');
+            const hintBtn = document.getElementById('hint');
+            const keys = document.querySelectorAll('.key');
+            const gamesPlayedEl = document.getElementById('games-played');
+            const winStreakEl = document.getElementById('win-streak');
+            const winPercentEl = document.getElementById('win-percent');
+            const dictionaryInfo = document.getElementById('dictionary-info');
+            
+            // Load words from dictionary file
+            async function loadDictionary() {
+                try {
+                    // Path to your Russian dictionary file
+                    const response = await fetch('/static/russian.txt');
+                    const text = await response.text();
+                    
+                    // Process words: uppercase, filter by length, remove duplicates
+                    const allWords = text.toUpperCase().split('\n');
+                    validWords = [...new Set(allWords.filter(word => word.length === WORD_LENGTH))];
+                    
+                    // Filter out words with non-Russian letters
+                    const russianLetters = /^[А-ЯЁ]+$/;
+                    validWords = validWords.filter(word => russianLetters.test(word));
+                    
+                    dictionaryInfo.textContent = `Словарь: ${validWords.length} русских слов (${WORD_LENGTH} букв)`;
+                    message.textContent = 'Словарь загружен! Начните игру...';
+                    startNewGame();
+                } catch (error) {
+                    console.error('Ошибка загрузки словаря:', error);
+                    message.textContent = 'Ошибка загрузки словаря. Используются стандартные слова.';
+                    
+                    // Fallback Russian words
+                    validWords = [
+                        'ГОРОД'
+
+                    ];
+                    
+                    dictionaryInfo.textContent = `Словарь: ${validWords.length} стандартных русских слов`;
+                    startNewGame();
+                }
+            }
+            
+            // Initialize the game board
+            function initBoard() {
+                board.innerHTML = '';
+                for (let i = 0; i < MAX_GUESSES; i++) {
+                    const row = document.createElement('div');
+                    row.className = 'row';
+                    for (let j = 0; j < WORD_LENGTH; j++) {
+                        const tile = document.createElement('div');
+                        tile.className = 'tile';
+                        row.appendChild(tile);
+                    }
+                    board.appendChild(row);
+                }
+            }
+            
+            // Start a new game
+            function startNewGame() {
+                // Reset game state
+                currentRow = 0;
+                currentTile = 0;
+                gameOver = false;
+                
+                // Select a new target word
+                if (validWords.length > 0) {
+                    targetWord = validWords[Math.floor(Math.random() * validWords.length)];
+                } else {
+                    // Fallback if no words available
+                    targetWord = 'СЛОВО';
+                }
+                
+                console.log('Загаданное слово:', targetWord); // For debugging
+                
+                // Reset message
+                message.textContent = 'Начните вводить слово...';
+                message.style.color = 'white';
+                
+                // Clear board
+                initBoard();
+                
+                // Reset keyboard
+                keys.forEach(key => {
+                    key.classList.remove('correct', 'present', 'absent');
+                });
+            }
+            
+            // Update statistics display
+            function updateStats() {
+                gamesPlayedEl.textContent = gamesPlayed;
+                winStreakEl.textContent = winStreak;
+                winPercentEl.textContent = gamesPlayed > 0 ? Math.round((winCount / gamesPlayed) * 100) + '%' : '0%';
+            }
+            
+            // Handle key press (both physical and virtual keyboard)
+            function pressKey(key) {
+                if (gameOver) return;
+                
+                if (/^[А-ЯЁ]$/.test(key)) {
+                    if (currentTile < WORD_LENGTH) {
+                        const tile = board.children[currentRow].children[currentTile];
+                        tile.textContent = key;
+                        tile.classList.add('filled');
+                        currentTile++;
+                    }
+                } else if (key === 'Backspace') {
+                    if (currentTile > 0) {
+                        currentTile--;
+                        const tile = board.children[currentRow].children[currentTile];
+                        tile.textContent = '';
+                        tile.classList.remove('filled');
+                    }
+                } else if (key === 'Enter') {
+                    if (currentTile === WORD_LENGTH) {
+                        checkGuess();
+                    } else {
+                        message.textContent = 'Недостаточно букв';
+                        message.style.color = '#ff6b6b';
+                        setTimeout(() => {
+                            message.textContent = 'Продолжайте ввод...';
+                            message.style.color = 'white';
+                        }, 1500);
+                    }
+                }
+            }
+            
+            // Check the current guess
+            function checkGuess() {
+                const row = board.children[currentRow];
+                let guess = '';
+                
+                // Get the guess from the tiles
+                for (let i = 0; i < WORD_LENGTH; i++) {
+                    guess += row.children[i].textContent;
+                }
+                
+                // Check if the word is valid
+                if (!validWords.includes(guess)) {
+                    message.textContent = 'Слово не в словаре';
+                    message.style.color = '#ff6b6b';
+                    
+                    // Shake animation for invalid word
+                    row.classList.add('shake');
+                    setTimeout(() => row.classList.remove('shake'), 600);
+                    return;
+                }
+                
+                // Check the letters
+                const targetLetters = targetWord.split('');
+                const guessLetters = guess.split('');
+                const result = [];
+                
+                // First pass: mark correct letters
+                for (let i = 0; i < WORD_LENGTH; i++) {
+                    if (guessLetters[i] === targetLetters[i]) {
+                        result[i] = 'correct';
+                        targetLetters[i] = null; // Mark as used
+                    }
+                }
+                
+                // Second pass: mark present and absent letters
+                for (let i = 0; i < WORD_LENGTH; i++) {
+                    if (result[i]) continue; // Skip already marked as correct
+                    
+                    if (targetLetters.includes(guessLetters[i])) {
+                        result[i] = 'present';
+                        targetLetters[targetLetters.indexOf(guessLetters[i])] = null;
+                    } else {
+                        result[i] = 'absent';
+                    }
+                }
+                
+                // Apply results to tiles and keyboard
+                for (let i = 0; i < WORD_LENGTH; i++) {
+                    const tile = row.children[i];
+                    setTimeout(() => {
+                        tile.classList.add(result[i]);
+                    }, i * 200);
+                    
+                    // Update keyboard key color
+                    const key = document.querySelector(`.key[data-key="${guessLetters[i]}"]`);
+                    if (!key.classList.contains('correct')) {
+                        key.classList.add(result[i]);
+                    }
+                }
+                
+                // Check for win
+                if (guess === targetWord) {
+                    gameOver = true;
+                    winCount++;
+                    gamesPlayed++;
+                    winStreak++;
+                    setTimeout(() => {
+                        message.innerHTML = `<div class="win-message">Вы выиграли!</div>`;
+                        setTimeout(() => {
+                            message.innerHTML = `Загаданное слово: <strong>${targetWord}</strong>`;
+                        }, 3000);
+                    }, 1500);
+                } 
+                // Check for loss
+                else if (currentRow === MAX_GUESSES - 1) {
+                    gameOver = true;
+                    gamesPlayed++;
+                    winStreak = 0;
+                    setTimeout(() => {
+                        message.innerHTML = `Игра окончена! Слово: <strong>${targetWord}</strong>`;
+                    }, 1500);
+                } 
+                // Continue playing
+                else {
+                    currentRow++;
+                    currentTile = 0;
+                    setTimeout(() => {
+                        message.textContent = 'Следующая попытка...';
+                    }, 1500);
+                }
+                
+                updateStats();
+            }
+            
+            // Provide a hint
+            function provideHint() {
+                if (gameOver) return;
+                
+                // Find an unguessed letter position
+                let hintPosition = -1;
+                for (let i = 0; i < WORD_LENGTH; i++) {
+                    const tile = board.children[currentRow].children[i];
+                    if (!tile.textContent) {
+                        hintPosition = i;
+                        break;
+                    }
+                }
+                
+                if (hintPosition === -1) {
+                    message.textContent = 'Нет места для подсказки';
+                    message.style.color = '#ff6b6b';
+                    return;
+                }
+                
+                // Reveal one letter
+                const row = board.children[currentRow];
+                const tile = row.children[hintPosition];
+                tile.textContent = targetWord[hintPosition];
+                tile.classList.add('filled');
+                currentTile++;
+                
+                message.textContent = 'Подсказка добавлена!';
+                setTimeout(() => message.textContent = 'Продолжайте ввод...', 1500);
+            }
+            
+            // Event Listeners
+            document.addEventListener('keydown', (e) => {
+                if (e.ctrlKey || e.metaKey || e.altKey) return;
+                
+                const key = e.key.toUpperCase();
+                if (key === 'BACKSPACE' || key === 'ENTER' || /^[А-ЯЁ]$/.test(key)) {
+                    e.preventDefault();
+                    pressKey(key);
+                }
+            });
+            
+            keys.forEach(key => {
+                key.addEventListener('click', () => {
+                    pressKey(key.dataset.key);
+                });
+            });
+            
+            newGameBtn.addEventListener('click', startNewGame);
+            hintBtn.addEventListener('click', provideHint);
+            
+            // Initialize the game
+            loadDictionary();
+            updateStats();
+        });
+    </script>
+</body>
+</html>
